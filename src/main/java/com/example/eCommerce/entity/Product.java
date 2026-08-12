@@ -22,22 +22,20 @@ public class Product {
     @GeneratedValue( strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
     private String name;
     
-    @Column( nullable = false )
     private String description;
 
-    @Column( nullable = false )
+    // @Column( nullable = false )
     private int price;
         
-    @Column( nullable = false )
+    // @Column( nullable = false )
     private String imageUrl;
     
-    @Column( nullable = false )
+    // @Column( nullable = false )
     private int stockQuantity;
     
-    @Column( nullable = false )
+    // @Column( nullable = false )
     private String category;
 
     private ProductStatus productStatus;
