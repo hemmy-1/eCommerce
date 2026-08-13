@@ -27,6 +27,7 @@ public class AuthService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     public UUID register(RegUserRequestDto request) {
@@ -60,6 +61,7 @@ public class AuthService {
 
             return token;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Username or PAssword Not correct");
         }
     }
