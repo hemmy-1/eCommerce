@@ -1,4 +1,4 @@
-package com.example.eCommerce.contoller;
+package com.example.eCommerce.controller;
 
 import java.util.UUID;
 

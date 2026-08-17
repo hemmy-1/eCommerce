@@ -7,10 +7,23 @@ import java.util.UUID;
 
 public class ProductSpecifications {
 
+    public static Specification<Product> hasKeyword(String keyword) {
+        return (root, query, cb) -> {
+            if (keyword == null || keyword.trim().isEmpty())
+                return null;
+
+            String pattern = "%" + keyword.trim().toLowerCase() + "%";
+            return cb.or(
+                    cb.like(cb.lower(root.get("name")), pattern),
+                    cb.like(cb.lower(root.get("description")), pattern));
+        };
+    }
+
     public static Specification<Product> hasCategory(UUID categoryId) {
         return (root, query, cb) -> categoryId == null ? null : cb.equal(root.get("category").get("id"), categoryId);
     }
 
+    
     public static Specification<Product> priceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, cb) -> {
             if (minPrice != null && maxPrice != null) {
