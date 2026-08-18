@@ -47,8 +47,8 @@ public class ProductController {
     @GetMapping("activeProducts")
     public ResponseEntity<List<ProductResponseDto>> getAllActiveProducts() {
         List<ProductResponseDto> response = productService.allActiveProducts();
-        return ResponseEntity.ok(response);
-    }
+    return ResponseEntity.ok(response);
+    }   
 
     @GetMapping("/detail/{name}")
     public ResponseEntity<ProductResponseDto> getActiveProductDetail(@PathVariable String name) {
