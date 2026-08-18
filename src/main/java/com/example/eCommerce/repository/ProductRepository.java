@@ -12,8 +12,10 @@ import com.example.eCommerce.enums.ProductStatus;
 
 public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpecificationExecutor<Product> {
 
-    Optional<String> findByName(String name);
+    Optional<Product> findByName(String name);
 
     List<Product> findByProductStatus(ProductStatus productStatus);
+
+    // Optional<Product> findByName(String name);
     
 }

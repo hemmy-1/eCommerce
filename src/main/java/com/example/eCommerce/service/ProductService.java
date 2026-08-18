@@ -93,6 +93,22 @@ public class ProductService {
                 .toList();
     }
 
+    public ProductResponseDto activeProductDetails(ProductRequestDto request) {
+        Product product = productRepository.findByName(request.getName())
+                .orElseThrow(() -> new RuntimeException("this product is not avialable"));
+
+        return new ProductResponseDto(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getImageUrls(),
+                product.getStockQuantity(),
+                product.getCategories().getName(),
+                product.getProductStatus());
+
+    }
+
     // filterProducts
     public Page<Product> getFilteredProducts(
             String keyword,

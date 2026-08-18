@@ -49,6 +49,13 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("detail")
+    public ResponseEntity<ProductResponseDto> activeProductDetail() {
+        ProductResponseDto response = productService.activeProductDetails(null);
+        return ResponseEntity.ok(response);
+    }
+
+
     
 
     @GetMapping("search")
