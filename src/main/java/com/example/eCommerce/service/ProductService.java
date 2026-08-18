@@ -44,7 +44,7 @@ public class ProductService {
         product.setImageUrls(request.getImageUrls());
         product.setCategories(category);
         product.setPrice(request.getPrice());
-        product.setProductStatus(request.getProductStatus());
+        product.setProductStatus(ProductStatus.ACTIVE);
         product.setStockQuantity(request.getStockQuantity());
 
         Product savedProduct = productRepository.save(product);
@@ -93,8 +93,8 @@ public class ProductService {
                 .toList();
     }
 
-    public ProductResponseDto activeProductDetails(ProductRequestDto request) {
-        Product product = productRepository.findByName(request.getName())
+    public ProductResponseDto activeProductDetails(String name) {
+        Product product = productRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("this product is not avialable"));
 
         return new ProductResponseDto(
@@ -106,7 +106,25 @@ public class ProductService {
                 product.getStockQuantity(),
                 product.getCategories().getName(),
                 product.getProductStatus());
+    }
 
+    public ProductResponseDto deactivateProduct(ProductRequestDto request) {
+        Product product = productRepository.findByName(request.getName())
+                .orElseThrow(() -> new RuntimeException("product not found with name:  " + request.getName()));
+
+        product.setProductStatus(ProductStatus.DEACTIVATE);
+
+        Product updatedProduct = productRepository.save(product);
+
+        return new ProductResponseDto(
+                updatedProduct.getId(),
+                updatedProduct.getName(),
+                updatedProduct.getDescription(),
+                updatedProduct.getPrice(),
+                updatedProduct.getImageUrls(),
+                updatedProduct.getStockQuantity(),
+                updatedProduct.getCategories().getName(),
+                updatedProduct.getProductStatus());
     }
 
     // filterProducts

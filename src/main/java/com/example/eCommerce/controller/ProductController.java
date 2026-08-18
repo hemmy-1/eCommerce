@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
+
     @GetMapping("all")
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<ProductResponseDto> response = productService.allProduct();
@@ -49,16 +50,13 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("detail")
-    public ResponseEntity<ProductResponseDto> activeProductDetail() {
-        ProductResponseDto response = productService.activeProductDetails(null);
+    @GetMapping("/detail/{name}")
+    public ResponseEntity<ProductResponseDto> getActiveProductDetail(@PathVariable String name) {
+        ProductResponseDto response = productService.activeProductDetails(name);
         return ResponseEntity.ok(response);
     }
 
-
-    
-
-    @GetMapping("search")
+    @PostMapping("search")
     public ResponseEntity<Page<Product>> listProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) UUID categoryId,

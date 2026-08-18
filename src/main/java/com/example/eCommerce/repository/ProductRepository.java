@@ -16,6 +16,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 
     List<Product> findByProductStatus(ProductStatus productStatus);
 
-    // Optional<Product> findByName(String name);
     
 }
