@@ -2,6 +2,7 @@ package com.example.eCommerce.service;
 
 import java.math.BigDecimal;
 import java.util.Locale.Category;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import com.example.eCommerce.Dtos.ProductRequestDto;
 import com.example.eCommerce.Dtos.ProductResponseDto;
 import com.example.eCommerce.entity.Categories;
 import com.example.eCommerce.entity.Product;
+import com.example.eCommerce.enums.ProductStatus;
 import com.example.eCommerce.repository.CategoryRepository;
 import com.example.eCommerce.repository.ProductRepository;
 
@@ -27,39 +29,71 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
+    // create product
     public ProductResponseDto createProduct(ProductRequestDto request) {
-    if (productRepository.findByName(request.getName()).isPresent()) {
-        throw new RuntimeException("A product with this name already exists");
+        if (productRepository.findByName(request.getName()).isPresent()) {
+            throw new RuntimeException("A product with this name already exists");
+        }
+
+        Categories category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + request.getCategoryId()));
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setImageUrls(request.getImageUrls());
+        product.setCategories(category);
+        product.setPrice(request.getPrice());
+        product.setProductStatus(request.getProductStatus());
+        product.setStockQuantity(request.getStockQuantity());
+
+        Product savedProduct = productRepository.save(product);
+
+        return new ProductResponseDto(
+                savedProduct.getId(),
+                savedProduct.getName(),
+                savedProduct.getDescription(),
+                savedProduct.getPrice(),
+                savedProduct.getImageUrls(),
+                savedProduct.getStockQuantity(),
+                savedProduct.getCategories().getName(),
+                savedProduct.getProductStatus());
     }
 
-    Categories category = categoryRepository.findById(request.getCategoryId())
-            .orElseThrow(() -> new RuntimeException("Category not found with ID: " + request.getCategoryId()));
+    public List<ProductResponseDto> allProduct() {
+        List<Product> products = productRepository.findAll();
 
-    Product product = new Product();
-    product.setName(request.getName());
-    product.setDescription(request.getDescription());
-    product.setImageUrls(request.getImageUrls());
-    product.setCategories(category);
-    product.setPrice(request.getPrice());
-    product.setProductStatus(request.getProductStatus()); 
-    product.setStockQuantity(request.getStockQuantity());
+        return products.stream()
+                .map(product -> new ProductResponseDto(
+                        product.getId(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getImageUrls(),
+                        product.getStockQuantity(),
+                        product.getCategories().getName(),
+                        product.getProductStatus()))
+                .toList();
+    }
 
-    Product savedProduct = productRepository.save(product);
+    public List<ProductResponseDto> allActiveProducts() {
 
-    return new ProductResponseDto(
-            savedProduct.getId(),
-            savedProduct.getName(),
-            savedProduct.getDescription(),
-            savedProduct.getPrice(),
-            savedProduct.getImageUrls(),
-            savedProduct.getStockQuantity(),
-            savedProduct.getCategories().getName(),
-            savedProduct.getProductStatus());
-}
+        List<Product> products = productRepository.findByProductStatus(ProductStatus.ACTIVE);
 
+        return products.stream()
+                .map(product -> new ProductResponseDto(
+                        product.getId(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getImageUrls(),
+                        product.getStockQuantity(),
+                        product.getCategories().getName(),
+                        product.getProductStatus()))
+                .toList();
+    }
 
-
-
+    // filterProducts
     public Page<Product> getFilteredProducts(
             String keyword,
             UUID categoryId,
