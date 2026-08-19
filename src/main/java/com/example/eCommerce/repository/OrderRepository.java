@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
     
     List<Order> findByCustomerIdOrderByCreatedAtDesc(UUID customerId);
+    
 }
