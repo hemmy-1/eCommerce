@@ -61,17 +61,14 @@ public class OrderService {
             }
 
             if (cartItem.getQuantity() > product.getStockQuantity()) {
-                stockErrors.add("Product '" + product.getName() + "' has insufficient stock (Requested: "
-                        + cartItem.getQuantity() + ", Available: " + product.getStockQuantity() + ").");
+                stockErrors.add("Product '" + product.getName() + "' has insufficient stock.");
                 continue;
             }
 
             BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             computedSubtotal = computedSubtotal.add(itemTotal);
 
-            product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
-            productRepository.save(product);
-
+           
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setProductName(product.getName());
