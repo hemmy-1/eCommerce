@@ -19,7 +19,7 @@ import com.example.eCommerce.Dtos.CategoryResponseDto;
 import com.example.eCommerce.service.CategoryService;
 
 @RestController
-@RequestMapping("api/v1/categoty")
+@RequestMapping("api/v1/category")
 public class CategoryController {
 
     private CategoryService categoryService;
@@ -28,7 +28,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto request) {
         CategoryResponseDto response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

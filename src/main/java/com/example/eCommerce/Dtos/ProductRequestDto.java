@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.eCommerce.enums.ProductStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,5 +27,4 @@ public class ProductRequestDto {
 
     private UUID categoryId;
     
-    private ProductStatus productStatus;
 }

@@ -92,6 +92,7 @@ public class ProductService {
                 .toList();
     }
 
+
     public ProductResponseDto activeProductDetails(String name) {
         Product product = productRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("this product is not avialable"));
@@ -107,9 +108,9 @@ public class ProductService {
                 product.getProductStatus());
     }
 
-    public ProductResponseDto deactivateProduct(ProductRequestDto request) {
-        Product product = productRepository.findByName(request.getName())
-                .orElseThrow(() -> new RuntimeException("product not found with name:  " + request.getName()));
+    public ProductResponseDto deactivateProduct(String name) {
+        Product product = productRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("product not found with name:  " + name));
 
         product.setProductStatus(ProductStatus.DEACTIVATE);
 
@@ -126,7 +127,6 @@ public class ProductService {
                 updatedProduct.getProductStatus());
     }
 
-    // filterProducts
     public Page<Product> getFilteredProducts(
             String keyword,
             UUID categoryId,

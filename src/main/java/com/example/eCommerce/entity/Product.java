@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.eCommerce.enums.ProductStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -56,7 +57,8 @@ public class Product {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categories_id", nullable = false)
+    @JoinColumn(name = "categories_id", nullable = true)
+    @JsonIgnoreProperties("products")
     private Categories categories;
 
     @Enumerated(EnumType.STRING)
