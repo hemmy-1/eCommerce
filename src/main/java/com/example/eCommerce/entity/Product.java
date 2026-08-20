@@ -56,7 +56,7 @@ public class Product {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "categories_id", nullable = false)
     private Categories categories;
 
     @Enumerated(EnumType.STRING)

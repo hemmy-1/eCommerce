@@ -1,35 +1,61 @@
 package com.example.eCommerce.controller;
 
-import java.util.UUID;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.eCommerce.Dtos.LoginUserRequestDto;
-import com.example.eCommerce.Dtos.RegUserRequestDto;
+import com.example.eCommerce.Dtos.*;
 import com.example.eCommerce.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private AuthService authService;
+    private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegUserRequestDto request) {
+        return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("register")
-    public UUID register (@RequestBody RegUserRequestDto request ){
-        return authService.register(request);
+    @PostMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody VerifyEmailRequestDto verify) {
+        
+        System.out.println("++++++++++");
+        System.out.println("++++++++++");
+        System.out.println("++++++++++");
+        System.out.println("++++++++++");
+        System.out.println(verify.getEmail() + verify.getCode());
+        authService.verifyEmail(verify.getEmail(), verify.getCode());
+        return ResponseEntity.ok("Email verified successfully");
     }
 
-    @PostMapping("login")
-    public String login(@RequestBody LoginUserRequestDto request){
-        return authService.login(request);
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginUserRequestDto request) {
+        return ResponseEntity.ok(authService.login(request));
     }
-    
-    
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponseDto> refreshToken(@RequestBody RefreshTokenRequestDto request) {
+        return ResponseEntity.ok(authService.refreshToken(request));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody String email) {
+        authService.logout(email);
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<String> requestReset(@RequestBody PasswordResetRequestDto request) {
+        return ResponseEntity.ok(authService.requestPasswordReset(request));
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<String> confirmReset(@RequestBody PasswordResetConfirmDto request) {
+        authService.confirmPasswordReset(request);
+        return ResponseEntity.ok("Password reset successfully");
+    }
 }

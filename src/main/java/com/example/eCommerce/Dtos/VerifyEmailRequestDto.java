@@ -1,0 +1,10 @@
+package com.example.eCommerce.Dtos;
+
+import lombok.Data;
+
+@Data
+public class VerifyEmailRequestDto {
+    
+    private String email;
+    private String code;
+}

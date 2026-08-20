@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.eCommerce.enums.CategoryStatus;
-import com.example.eCommerce.entity.Product;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +36,7 @@ public class Categories {
 
     private String description;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "categories")
     private List<Product> products = new ArrayList<>();
 
     private CategoryStatus status;
