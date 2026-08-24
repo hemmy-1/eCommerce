@@ -5,6 +5,8 @@ import com.example.eCommerce.entity.User;
 import com.example.eCommerce.enums.Role;
 import com.example.eCommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,11 +25,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final JavaMailSender mailSender;
 
     @Transactional
     public String register(RegUserRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            // Generic message or existing handling
             throw new IllegalArgumentException("Registration request received.");
         }
 
@@ -43,7 +45,10 @@ public class AuthService {
 
         userRepository.save(newUser);
 
-        return "Registration successful. Please check your email for verification code: " + verificationCode;
+        sendEmail(newUser.getEmail(), "Verify Your Email",
+                "Welcome to eCommerce! Your verification code is: " + verificationCode);
+
+        return "Registration successful. Please check your email for the verification code.";
     }
 
     @Transactional
@@ -51,7 +56,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid verification request"));
 
-        if (!code.equals(user.getVerificationCode())) {
+        if (user.getVerificationCode() == null || !code.equals(user.getVerificationCode())) {
             throw new IllegalArgumentException("Invalid verification code");
         }
 
@@ -101,15 +106,18 @@ public class AuthService {
 
     @Transactional
     public String requestPasswordReset(PasswordResetRequestDto request) {
-        String token = UUID.randomUUID().toString();
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("this email is not valid"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
 
+        String token = UUID.randomUUID().toString();
         user.setPasswordResetToken(token);
         user.setPasswordResetExpiry(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
 
-        return "If an account exists with this email, a reset link has been sent./n" + token;
+        sendEmail(user.getEmail(), "Password Reset Request",
+                "To reset your password, use the token below:\n" + token);
+
+        return "If an account exists with this email, a reset link has been sent.";
     }
 
     @Transactional
@@ -125,5 +133,13 @@ public class AuthService {
         user.setPasswordResetToken(null);
         user.setPasswordResetExpiry(null);
         userRepository.save(user);
+    }
+
+    private void sendEmail(String toEmail, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
     }
 }

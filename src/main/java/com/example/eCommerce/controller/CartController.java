@@ -17,11 +17,13 @@ public class CartController {
 
     private final CartService cartService;
 
+    //worked
     @GetMapping("/{customerId}")
     public ResponseEntity<CartResponseDto> getCart(@PathVariable UUID customerId) {
         return ResponseEntity.ok(cartService.getCart(customerId));
     }
 
+    // worked
     @PostMapping("/{customerId}/items")
     public ResponseEntity<CartResponseDto> addToCart(
             @PathVariable UUID customerId,
@@ -29,6 +31,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.addToCart(customerId, request));
     }
 
+    //worked
     @PutMapping("/{customerId}/items/{productId}")
     public ResponseEntity<CartResponseDto> updateQuantity(
             @PathVariable UUID customerId,
@@ -37,6 +40,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.updateQuantity(customerId, productId, request.getQuantity()));
     }
 
+    //worked
     @DeleteMapping("/{customerId}/items/{productId}")
     public ResponseEntity<CartResponseDto> removeItem(
             @PathVariable UUID customerId,

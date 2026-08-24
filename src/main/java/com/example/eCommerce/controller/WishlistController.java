@@ -18,11 +18,13 @@ public class WishlistController {
 
     private final WishlistService wishlistService;
 
+    //done
     @GetMapping("/{customerId}")
     public ResponseEntity<List<WishlistResponseDto>> getWishlist(@PathVariable UUID customerId) {
         return ResponseEntity.ok(wishlistService.getWishlist(customerId));
     }
 
+    //done
     @PostMapping("/{customerId}")
     public ResponseEntity<WishlistResponseDto> addToWishlist(
             @PathVariable UUID customerId,
@@ -31,6 +33,7 @@ public class WishlistController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //done
     @DeleteMapping("/{customerId}/products/{productId}")
     public ResponseEntity<Void> removeFromWishlist(
             @PathVariable UUID customerId,

@@ -33,6 +33,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    //done
     @PostMapping("create")
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request) {
         ProductResponseDto response = productService.createProduct(request);
@@ -40,30 +41,35 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //done
     @GetMapping("all")
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<ProductResponseDto> response = productService.allProduct();
         return ResponseEntity.ok(response);
     }
 
+    //done
     @GetMapping("activeProducts")
     public ResponseEntity<List<ProductResponseDto>> getAllActiveProducts() {
         List<ProductResponseDto> response = productService.allActiveProducts();
         return ResponseEntity.ok(response);
     }
 
+    //done
     @PatchMapping("/deactivate/{name}")
     public ResponseEntity<ProductResponseDto> deactivateProduct(@PathVariable String name) {
         ProductResponseDto response = productService.deactivateProduct(name);
         return ResponseEntity.ok(response);
     }
 
+    //done
     @GetMapping("/detail/{name}")
     public ResponseEntity<ProductResponseDto> getActiveProductDetail(@PathVariable String name) {
         ProductResponseDto response = productService.activeProductDetails(name);
         return ResponseEntity.ok(response);
     }
 
+    //done
     @PostMapping("search")
     public ResponseEntity<Page<Product>> listProducts(
             @RequestParam(required = false) String keyword,

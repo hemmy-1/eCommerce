@@ -4,8 +4,6 @@ import com.example.eCommerce.Dtos.*;
 import com.example.eCommerce.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,12 +20,6 @@ public class AuthController {
 
     @PostMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestBody VerifyEmailRequestDto verify) {
-        
-        System.out.println("++++++++++");
-        System.out.println("++++++++++");
-        System.out.println("++++++++++");
-        System.out.println("++++++++++");
-        System.out.println(verify.getEmail() + verify.getCode());
         authService.verifyEmail(verify.getEmail(), verify.getCode());
         return ResponseEntity.ok("Email verified successfully");
     }
