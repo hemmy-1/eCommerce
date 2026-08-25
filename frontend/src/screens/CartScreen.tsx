@@ -1,0 +1,10 @@
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { api, Cart } from '../api';
+import { ActionButton } from '../components/ActionButton';
+import { money, styles } from '../theme';
+
+export function CartScreen({ cart, token, userId, onChange, onCheckout }: { cart: Cart | null; token: string; userId: string; onChange: (cart: Cart) => void; onCheckout: () => void }) {
+  const update = (id: string, quantity: number) => { if (quantity < 1) return; api.updateCart(token, userId, id, quantity).then(onChange).catch(e => Alert.alert('Bag', e.message)); };
+  if (!cart?.items.length) return <Text style={styles.empty}>Your bag is waiting for something lovely.</Text>;
+  return <ScrollView contentContainerStyle={styles.scroll}><Text style={styles.sectionTitle}>Your bag</Text>{cart.items.map(item => <View style={{ backgroundColor: '#fff', padding: 14, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 10 }} key={item.productId}><View style={{ flex: 1 }}><Text style={{ fontWeight: '700', color: '#292c28' }}>{item.productName}</Text><Text style={styles.muted}>{money(item.unitPrice)} each</Text></View><View style={{ flexDirection: 'row', alignItems: 'center', gap: 11 }}><Pressable onPress={() => update(item.productId, item.quantity - 1)}><Text style={{ fontSize: 22, color: '#36533b' }}>−</Text></Pressable><Text>{item.quantity}</Text><Pressable onPress={() => update(item.productId, item.quantity + 1)}><Text style={{ fontSize: 22, color: '#36533b' }}>+</Text></Pressable></View><Text style={{ fontWeight: '700', color: '#405742' }}>{money(item.unitPrice * item.quantity)}</Text></View>)}<View style={[styles.row, { marginVertical: 24 }]}><Text style={styles.sectionTitle}>Subtotal</Text><Text style={{ fontSize: 22, fontWeight: '800', color: '#263d2b' }}>{money(cart.cartSubtotal)}</Text></View><ActionButton label="Checkout" onPress={onCheckout} /><Pressable onPress={() => api.clearCart(token, userId).then(() => onChange({ ...cart, items: [], cartSubtotal: 0 }))}><Text style={styles.danger}>Clear bag</Text></Pressable></ScrollView>;
+}

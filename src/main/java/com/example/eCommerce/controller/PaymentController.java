@@ -5,9 +5,9 @@ import com.example.eCommerce.Dtos.PaystackWebhookDto;
 import com.example.eCommerce.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -16,6 +16,9 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @Value("${payment.simulation.enabled:false}")
+    private boolean paymentSimulationEnabled;
 
     @PostMapping("/initialize/{orderId}")
     public ResponseEntity<PaymentResponseDto> initializePayment(@PathVariable UUID orderId) {
@@ -27,7 +30,11 @@ public ResponseEntity<Void> handleWebhook(@RequestBody PaystackWebhookDto payloa
     if ("charge.success".equalsIgnoreCase(payload.getEvent()) && payload.getData() != null) {
         String reference = payload.getData().getReference();
         
-        paymentService.verifyAndFulfillPayment(reference);
+        if (paymentSimulationEnabled && "success".equalsIgnoreCase(payload.getData().getStatus())) {
+            paymentService.simulateAndFulfillPayment(reference);
+        } else {
+            paymentService.verifyAndFulfillPayment(reference);
+        }
     }
 
     return ResponseEntity.ok().build();

@@ -61,6 +61,7 @@ export const api = {
   orders: (token: string, userId: string) => request<Order[]>(`/api/orders/customer/${userId}`, { token }),
   order: (token: string, orderId: string) => request<Order>(`/api/orders/${orderId}`, { token }),
   initializePayment: (token: string, orderId: string) => request<Payment>(`/api/payments/initialize/${orderId}`, { method: 'POST', token }),
+  simulateWebhook: (token: string, reference: string) => request<void>('/api/payments/webhook', { method: 'POST', token, body: JSON.stringify({ event: 'charge.success', data: { reference, status: 'success' } }) }),
   createProduct: (token: string, data: unknown) => request<Product>('/api/v1/product/create', { method: 'POST', token, body: JSON.stringify(data) }),
   deactivateProduct: (token: string, name: string) => request<Product>(`/api/v1/product/deactivate/${encodeURIComponent(name)}`, { method: 'PATCH', token }),
   createCategory: (token: string, data: unknown) => request<Category>('/api/v1/category/create', { method: 'POST', token, body: JSON.stringify(data) }),

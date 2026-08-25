@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { api, User } from '../api';
+import { ActionButton } from '../components/ActionButton';
+import { Field } from '../components/Field';
+import { colors, styles } from '../theme';
+
+export function AccountScreen({ user, refresh, onRefresh, onLogout, onVerified }: { user: User; refresh: string | null; onRefresh: () => void; onLogout: () => void; onVerified: () => void }) {
+    const [email, setEmail] = useState(user.email), [resetToken, setResetToken] = useState(''), [newPassword, setNewPassword] = useState('');
+    const action = async (fn: () => Promise<unknown>) => { try { Alert.alert('Nova', String(await fn())); } catch (e) { Alert.alert('Nova', e instanceof Error ? e.message : 'Request failed'); } };
+    return <ScrollView contentContainerStyle={styles.scroll}><View style={{ alignItems: 'center', paddingVertical: 18, marginBottom: 20 }}><View style={{ width: 70, height: 70, borderRadius: 35, backgroundColor: colors.sage, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: '#2b482e', fontWeight: '800', fontSize: 27 }}>{user.nickName?.[0]?.toUpperCase()}</Text></View><Text style={{ fontSize: 28, fontWeight: '800', color: colors.ink, marginTop: 10 }}>{user.nickName}</Text><Text style={styles.muted}>{user.email}</Text><Text style={{ color: colors.gold, fontSize: 11, marginTop: 7, fontWeight: '800' }}>{user.role}</Text></View><Text style={styles.sectionTitle}>Account tools</Text><ActionButton label="Refresh session" variant="outline" onPress={onRefresh} disabled={!refresh} /><Field placeholder="Email for password reset" value={email} onChangeText={setEmail} /><ActionButton label="Request password reset" variant="outline" onPress={() => action(() => api.requestReset(email))} /><Field placeholder="Reset token" value={resetToken} onChangeText={setResetToken} /><Field placeholder="New password" secureTextEntry value={newPassword} onChangeText={setNewPassword} /><ActionButton label="Confirm password reset" variant="outline" onPress={() => action(() => api.confirmReset({ token: resetToken, newPassword }))} /><ActionButton label="Verify a different email" variant="outline" onPress={onVerified} /><Pressable onPress={onLogout} style={{ borderWidth: 1, borderColor: '#d7aaa0', borderRadius: 8, marginTop: 25 }}><Text style={styles.danger}>Sign out</Text></Pressable></ScrollView>;
+}

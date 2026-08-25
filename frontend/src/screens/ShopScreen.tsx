@@ -1,0 +1,13 @@
+import { useState } from 'react';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { api, Category, Product, WishlistItem } from '../api';
+import { ProductCard } from '../components/ProductCard';
+import { colors, styles } from '../theme';
+
+export function ShopScreen({ products, categories, saved, token, onAdd, onSave, onSelect }: { products: Product[]; categories: Category[]; saved: WishlistItem[]; token: string; onAdd: (id: string) => void; onSave: (id: string) => void; onSelect: (p: Product) => void }) {
+  const [query, setQuery] = useState(''), [category, setCategory] = useState('');
+  const list = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) && (!category || p.categoryName === category));
+  const search = async () => { try { await api.search(token, new URLSearchParams({ keyword: query, available: 'true', size: '30', page: '0' }).toString()); } catch { /* local filtering remains available */ } };
+  return <ScrollView contentContainerStyle={styles.scroll}><View style={{ backgroundColor: colors.white, borderRadius: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line }}><Text style={{ fontSize: 25, color: '#777' }}>⌕</Text><TextInput placeholder="Search the collection" value={query} onChangeText={setQuery} onSubmitEditing={search} /></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 16 }}><Pressable style={[chip, !category && activeChip]} onPress={() => setCategory('')}><Text style={[chipText, !category && activeChipText]}>All</Text></Pressable>{categories.map(c => <Pressable style={[chip, category === c.name && activeChip]} key={c.id} onPress={() => setCategory(c.name)}><Text style={[chipText, category === c.name && activeChipText]}>{c.name}</Text></Pressable>)}</ScrollView><View style={[styles.row, { marginBottom: 12 }]}><Text style={styles.sectionTitle}>Curated for you</Text><Text style={styles.muted}>{list.length} items</Text></View><View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 14 }}>{list.map(p => <ProductCard key={p.id} item={p} saved={saved.some(i => i.productId === p.id)} onAdd={onAdd} onSave={onSave} onSelect={onSelect} />)}</View>{!list.length && <Text style={styles.empty}>No products match that search.</Text>}</ScrollView>;
+}
+const chip = { paddingHorizontal: 15, paddingVertical: 9, borderRadius: 20, backgroundColor: '#e8e9e2' }, activeChip = { backgroundColor: colors.forest }, chipText = { color: '#5c6259', fontWeight: '600' as const }, activeChipText = { color: colors.white };

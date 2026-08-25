@@ -28,6 +28,9 @@ public class PaymentService {
     @Value("${paystack.secret.key}")
     private String paystackSecretKey;
 
+    @Value("${payment.simulation.enabled:false}")
+    private boolean paymentSimulationEnabled;
+
     @Transactional
     public PaymentResponseDto initializePayment(UUID orderId) {
         Order order = orderRepository.findById(orderId)
@@ -45,6 +48,12 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setTransactionReference(reference);
         Payment savedPayment = paymentRepository.save(payment);
+
+        if (paymentSimulationEnabled) {
+            return new PaymentResponseDto(
+                savedPayment.getId(), order.getId(), savedPayment.getAmount(), savedPayment.getStatus(),
+                reference, "", savedPayment.getCreatedAt());
+        }
 
         // Paystack API request body (Amount converted to kobo)
         Map<String, Object> body = new HashMap<>();
@@ -134,6 +143,27 @@ public class PaymentService {
             order.setStatus(OrderStatus.CANCELLED);
         }
 
+        orderRepository.save(order);
+        paymentRepository.save(payment);
+    }
+
+    @Transactional
+    public void simulateAndFulfillPayment(String reference) {
+        Payment payment = paymentRepository.findByTransactionReference(reference)
+                .orElseThrow(() -> new IllegalArgumentException("Payment record not found: " + reference));
+        if (payment.getStatus() == PaymentStatus.SUCCESS) return;
+
+        Order order = payment.getOrder();
+        for (OrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+            if (product.getStockQuantity() < item.getQuantity()) {
+                throw new IllegalStateException("Insufficient stock for product: " + product.getName());
+            }
+            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            productRepository.save(product);
+        }
+        payment.setStatus(PaymentStatus.SUCCESS);
+        order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
         paymentRepository.save(payment);
     }

@@ -1,0 +1,5 @@
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Order } from '../api';
+import { money, styles } from '../theme';
+
+export function OrdersScreen({ orders, onPay }: { orders: Order[]; onPay: (order: Order) => void }) { return <ScrollView contentContainerStyle={styles.scroll}>{!orders.length ? <Text style={styles.empty}>Your order history will appear here.</Text> : orders.map(order => <View style={{ backgroundColor: '#fff', padding: 16, marginBottom: 10 }} key={order.orderId}><View style={[styles.row, { marginBottom: 8 }]}><Text style={{ fontWeight: '700', color: '#292c28' }}>{order.status}</Text><Text style={styles.muted}>{new Date(order.createdAt).toLocaleDateString()}</Text></View><Text style={{ color: '#9a9c93', fontSize: 11 }}>{order.orderId}</Text><Text style={{ fontSize: 22, fontWeight: '800', color: '#263d2b', marginTop: 8 }}>{money(order.totalAmount)}</Text>{order.status === 'PENDING_PAYMENT' && <Pressable style={styles.outline} onPress={() => onPay(order)}><Text style={styles.outlineText}>Open payment</Text></Pressable>}</View>)}</ScrollView>; }
