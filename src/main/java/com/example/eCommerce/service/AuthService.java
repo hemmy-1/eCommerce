@@ -4,6 +4,7 @@ import com.example.eCommerce.Dtos.*;
 import com.example.eCommerce.entity.User;
 import com.example.eCommerce.enums.Role;
 import com.example.eCommerce.repository.UserRepository;
+import com.example.eCommerce.Exception.IllegalArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.eCommerce.Dtos.ProductRequestDto;
 import com.example.eCommerce.Dtos.ProductResponseDto;
+import com.example.eCommerce.Exception.RuntimeExceptions;
 import com.example.eCommerce.entity.Categories;
 import com.example.eCommerce.entity.Product;
 import com.example.eCommerce.enums.ProductStatus;
@@ -31,7 +32,7 @@ public class ProductService {
     // create product
     public ProductResponseDto createProduct(ProductRequestDto request) {
         if (productRepository.findByName(request.getName()).isPresent()) {
-            throw new RuntimeException("A product with this name already exists");
+            throw new RuntimeExceptions("A product with this name already exists");
         }
 
         Categories category = categoryRepository.findById(request.getCategoryId())
@@ -95,7 +96,7 @@ public class ProductService {
 
     public ProductResponseDto activeProductDetails(String name) {
         Product product = productRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("this product is not avialable"));
+                .orElseThrow(() -> new RuntimeExceptions("this product is not avialable"));
 
         return new ProductResponseDto(
                 product.getId(),
@@ -110,7 +111,7 @@ public class ProductService {
 
     public ProductResponseDto deactivateProduct(String name) {
         Product product = productRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("product not found with name:  " + name));
+                .orElseThrow(() -> new RuntimeExceptions("product not found with name:  " + name));
 
         product.setProductStatus(ProductStatus.DEACTIVATE);
 

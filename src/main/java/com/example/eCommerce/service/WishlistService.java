@@ -8,6 +8,7 @@ import com.example.eCommerce.entity.Wishlist;
 import com.example.eCommerce.repository.ProductRepository;
 import com.example.eCommerce.repository.UserRepository;
 import com.example.eCommerce.repository.WishlistRepository;
+import com.example.eCommerce.Exception.IllegalStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

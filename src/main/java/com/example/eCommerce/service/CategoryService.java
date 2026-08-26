@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.eCommerce.Dtos.CategoryRequestDto;
 import com.example.eCommerce.Dtos.CategoryResponseDto;
+import com.example.eCommerce.Exception.RuntimeExceptions;
 import com.example.eCommerce.entity.Categories;
 import com.example.eCommerce.enums.CategoryStatus;
 import com.example.eCommerce.repository.CategoryRepository;
@@ -22,7 +23,7 @@ public class CategoryService {
 
     public CategoryResponseDto createCategory(CategoryRequestDto request) {
         if (categoryRepository.findByName(request.getName()).isPresent()) {
-            throw new RuntimeException("Category with name '" + request.getName() + "' already exists");
+            throw new RuntimeExceptions("Category with name '" + request.getName() + "' already exists");
         }
 
         Categories category = new Categories();
@@ -43,7 +44,7 @@ public class CategoryService {
 
     public CategoryResponseDto updateCategory(UUID id, CategoryRequestDto request) {
         Categories category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeExceptions("Category not found with ID: " + id));
 
         category.setName(request.getName());
         category.setDescription(request.getDescription());
@@ -55,7 +56,7 @@ public class CategoryService {
 
     public CategoryResponseDto deactivateCategory(UUID id) {
         Categories category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeExceptions("Category not found with ID: " + id));
 
         category.setStatus(CategoryStatus.INACTIVE);
 

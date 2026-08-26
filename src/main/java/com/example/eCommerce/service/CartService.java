@@ -3,6 +3,7 @@ package com.example.eCommerce.service;
 import com.example.eCommerce.Dtos.AddToCartRequestDto;
 import com.example.eCommerce.Dtos.CartItem;
 import com.example.eCommerce.Dtos.CartResponseDto;
+import com.example.eCommerce.Exception.RuntimeExceptions;
 import com.example.eCommerce.entity.Product;
 import com.example.eCommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class CartService {
 
     public CartResponseDto addToCart(UUID customerId, AddToCartRequestDto request) {
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + request.getProductId()));
+                .orElseThrow(() -> new RuntimeExceptions("Product not found with ID: " + request.getProductId()));
 
         String key = getCartKey(customerId);
         String hashKey = product.getId().toString();
@@ -63,7 +64,7 @@ public class CartService {
 
         CartItem item = (CartItem) redisTemplate.opsForHash().get(key, hashKey);
         if (item == null) {
-            throw new RuntimeException("Item not found in cart");
+            throw new RuntimeExceptions("Item not found in cart");
         }
 
         item.setQuantity(newQuantity);
