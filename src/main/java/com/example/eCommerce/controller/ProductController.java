@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.example.eCommerce.Dtos.ProductRequestDto;
 import com.example.eCommerce.Dtos.ProductResponseDto;
@@ -34,6 +35,7 @@ public class ProductController {
 
     //done
     @PostMapping("create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request) {
         ProductResponseDto response = productService.createProduct(request);
 
@@ -42,6 +44,7 @@ public class ProductController {
 
     //done
     @GetMapping("all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<ProductResponseDto> response = productService.allProduct();
         return ResponseEntity.ok(response);
@@ -56,6 +59,7 @@ public class ProductController {
 
     //done
     @PatchMapping("/deactivate/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDto> deactivateProduct(@PathVariable String name) {
         ProductResponseDto response = productService.deactivateProduct(name);
         return ResponseEntity.ok(response);
