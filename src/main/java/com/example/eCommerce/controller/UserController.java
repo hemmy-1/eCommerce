@@ -18,8 +18,8 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal User user) {
-        User currentUser = userRepository.findByEmail(user.getEmail())
+    public ResponseEntity<UserResponseDto> getCurrentUser(String email) {
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return ResponseEntity.ok(new UserResponseDto(
