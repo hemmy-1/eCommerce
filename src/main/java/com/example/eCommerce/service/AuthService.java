@@ -5,7 +5,7 @@ import com.example.eCommerce.entity.User;
 import com.example.eCommerce.enums.Role;
 import com.example.eCommerce.repository.UserRepository;
 import com.example.eCommerce.Exception.IllegalArgumentException;
-
+import com.example.eCommerce.Exception.UserExistsException;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -46,7 +46,7 @@ public class AuthService {
     @Transactional
     public String register(RegUserRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Registration request received.");
+            throw new UserExistsException("This user already exixts");
         }
 
         User newUser = new User();

@@ -1,6 +1,8 @@
 package com.example.eCommerce.controller;
 
+import com.example.eCommerce.Dtos.LoginUserRequestDto;
 import com.example.eCommerce.Dtos.UserResponseDto;
+import com.example.eCommerce.Exception.UsernameNotFoundException;
 import com.example.eCommerce.entity.User;
 import com.example.eCommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,9 @@ public class UserController {
     private final UserRepository userRepository;
 
     @PostMapping("/me")
-    public ResponseEntity<UserResponseDto> getCurrentUser(@RequestBody String email) {
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public ResponseEntity<UserResponseDto> getCurrentUser(@RequestBody LoginUserRequestDto credential) {
+        User currentUser = userRepository.findByEmail(credential.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return ResponseEntity.ok(new UserResponseDto(
                 currentUser.getId(),
