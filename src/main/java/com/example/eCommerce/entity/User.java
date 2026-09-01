@@ -1,6 +1,8 @@
 package com.example.eCommerce.entity;
 
 import com.example.eCommerce.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +34,7 @@ public class User implements UserDetails {
 
     private String password;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.ROLE_CUSTOMER;
