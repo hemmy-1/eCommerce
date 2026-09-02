@@ -17,6 +17,10 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody RegUserRequestDto request) {
         return ResponseEntity.ok(authService.register(request));
     }
+    @PostMapping("/registeradmin")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegUserRequestDto request) {
+        return ResponseEntity.ok(authService.register(request));
+    }
 
     @PostMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestBody VerifyEmailRequestDto verify) {

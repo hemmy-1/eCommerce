@@ -68,6 +68,30 @@ public class AuthService {
     }
 
     @Transactional
+    public String registerAdmin(RegUserRequestDto request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserExistsException("This user already exixts");
+        }
+
+        User newUser = new User();
+        newUser.setEmail(request.getEmail());
+        newUser.setNickName(request.getNickName());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setRole(Role.ROLE_ADMIN);
+        newUser.setVerified(false);
+
+        String verificationCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        newUser.setVerificationCode(verificationCode);
+
+        userRepository.save(newUser);
+
+        sendEmail(newUser.getEmail(), "Verify Your Email",
+                "Welcome to eCommerce! Your verification code is: " + verificationCode);
+
+        return "Registration successful. Please check your email for the verification code.";
+    }
+
+    @Transactional
     public void verifyEmail(String email, String code) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid verification request"));
