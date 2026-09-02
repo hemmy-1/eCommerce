@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,14 +31,14 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto request) {
         CategoryResponseDto response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> updateCategory(
             @PathVariable UUID id,
             @RequestBody CategoryRequestDto request) {
@@ -46,7 +47,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> deactivateCategory(@PathVariable UUID id) {
         CategoryResponseDto response = categoryService.deactivateCategory(id);
         return ResponseEntity.ok(response);

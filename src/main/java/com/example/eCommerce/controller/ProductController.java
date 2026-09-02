@@ -35,7 +35,7 @@ public class ProductController {
 
     //done
     @PostMapping("create")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request) {
         ProductResponseDto response = productService.createProduct(request);
 
@@ -44,7 +44,7 @@ public class ProductController {
 
     //done
     @GetMapping("all")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<ProductResponseDto> response = productService.allProduct();
         return ResponseEntity.ok(response);
@@ -59,7 +59,7 @@ public class ProductController {
 
     //done
     @PatchMapping("/deactivate/{name}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDto> deactivateProduct(@PathVariable String name) {
         ProductResponseDto response = productService.deactivateProduct(name);
         return ResponseEntity.ok(response);
