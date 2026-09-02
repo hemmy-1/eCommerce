@@ -30,14 +30,14 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto request) {
         CategoryResponseDto response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponseDto> updateCategory(
             @PathVariable UUID id,
             @RequestBody CategoryRequestDto request) {
@@ -46,7 +46,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponseDto> deactivateCategory(@PathVariable UUID id) {
         CategoryResponseDto response = categoryService.deactivateCategory(id);
         return ResponseEntity.ok(response);

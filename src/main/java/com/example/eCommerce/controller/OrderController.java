@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/status")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
             @PathVariable UUID orderId,
             @RequestBody UpdateOrderStatusRequestDto request) {
