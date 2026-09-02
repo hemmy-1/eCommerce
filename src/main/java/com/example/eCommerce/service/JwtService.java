@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.example.eCommerce.enums.Role;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class JwtService {
 
         String token = Jwts.builder()
                             .subject(userDetails.getUsername())
+                            .claim("role", Role.ROLE_ADMIN)
                             .issuedAt(now)
                             .expiration(expiryDate)
                             .signWith(getKey())
