@@ -34,14 +34,20 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDto initializePayment(UUID orderId) {
+
+        System.out.println("Started the initialization of payment");
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
+System.out.println("Found the order to be " + order.toString());
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new IllegalStateException("Order is not in PENDING_PAYMENT status.");
         }
 
         String reference = "TRX-" + UUID.randomUUID().toString();
+System.out.println("Got to the reference: " + reference);
+
+System.out.println("Started Payment Creation");
 
         Payment payment = new Payment();
         payment.setOrder(order);
@@ -49,8 +55,11 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setTransactionReference(reference);
         Payment savedPayment = paymentRepository.save(payment);
+System.out.println("COmpleted saving Payment and it is: " + savedPayment.toString());
 
         if (paymentSimulationEnabled) {
+            System.out.println("Started Payment SImulation");
+            
             return new PaymentResponseDto(
                 savedPayment.getId(), order.getId(), savedPayment.getAmount(), savedPayment.getStatus(),
                 reference, "", savedPayment.getCreatedAt());

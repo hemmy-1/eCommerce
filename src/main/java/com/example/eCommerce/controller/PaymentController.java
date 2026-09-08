@@ -26,17 +26,17 @@ public class PaymentController {
     }
 
     @PostMapping("/webhook")
-public ResponseEntity<Void> handleWebhook(@RequestBody PaystackWebhookDto payload) {
-    if ("charge.success".equalsIgnoreCase(payload.getEvent()) && payload.getData() != null) {
-        String reference = payload.getData().getReference();
-        
-        if (paymentSimulationEnabled && "success".equalsIgnoreCase(payload.getData().getStatus())) {
-            paymentService.simulateAndFulfillPayment(reference);
-        } else {
-            paymentService.verifyAndFulfillPayment(reference);
-        }
-    }
+    public ResponseEntity<Void> handleWebhook(@RequestBody PaystackWebhookDto payload) {
+        if ("charge.success".equalsIgnoreCase(payload.getEvent()) && payload.getData() != null) {
+            String reference = payload.getData().getReference();
 
-    return ResponseEntity.ok().build();
-}
+            if (paymentSimulationEnabled && "success".equalsIgnoreCase(payload.getData().getStatus())) {
+                paymentService.simulateAndFulfillPayment(reference);
+            } else {
+                paymentService.verifyAndFulfillPayment(reference);
+            }
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
