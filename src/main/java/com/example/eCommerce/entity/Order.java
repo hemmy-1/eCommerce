@@ -1,6 +1,9 @@
 package com.example.eCommerce.entity;
 
 import com.example.eCommerce.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +26,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIgnore 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
@@ -41,6 +45,7 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING_PAYMENT;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference 
     private List<OrderItem> items = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)

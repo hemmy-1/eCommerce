@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -38,7 +39,7 @@ public class PaymentService {
         System.out.println("Started the initialization of payment");
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
-System.out.println("Found the order to be " + order.toString());
+        System.out.println("Found the order ID to be " + order.getId());
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new IllegalStateException("Order is not in PENDING_PAYMENT status.");
@@ -54,8 +55,9 @@ System.out.println("Started Payment Creation");
         payment.setAmount(order.getTotalAmount());
         payment.setStatus(PaymentStatus.PENDING);
         payment.setTransactionReference(reference);
+        payment.setCreatedAt(LocalDateTime.now());
         Payment savedPayment = paymentRepository.save(payment);
-System.out.println("COmpleted saving Payment and it is: " + savedPayment.toString());
+        System.out.println("Completed saving Payment with ID: " + savedPayment.getId());
 
         if (paymentSimulationEnabled) {
             System.out.println("Started Payment SImulation");
