@@ -6,17 +6,8 @@ import com.example.eCommerce.enums.Role;
 import com.example.eCommerce.repository.UserRepository;
 import com.example.eCommerce.Exception.IllegalArgumentException;
 import com.example.eCommerce.Exception.UserExistsException;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -36,12 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
-    @Value("${sendgrid.api-key}")
-    private String sendGridApiKey;
-
-    @Value("${sendgrid.from-email}")
-    private String fromEmail;
+    private final EmailService emailService;
 
     @Transactional
     public String register(RegUserRequestDto request) {
@@ -61,7 +46,7 @@ public class AuthService {
 
         userRepository.save(newUser);
 
-        sendEmail(newUser.getEmail(), "Verify Your Email",
+        emailService.sendEmail(newUser.getEmail(), "Verify Your Email",
                 "Welcome to eCommerce! Your verification code is: " + verificationCode);
 
         return "Registration successful. Please check your email for the verification code.";
@@ -85,7 +70,7 @@ public class AuthService {
 
         userRepository.save(newUser);
 
-        sendEmail(newUser.getEmail(), "Verify Your Email",
+        emailService.sendEmail(newUser.getEmail(), "Verify Your Email",
                 "Welcome to eCommerce! Your verification code is: " + verificationCode);
 
         return "Registration successful. Please check your email for the verification code.";
@@ -154,7 +139,7 @@ public class AuthService {
         user.setPasswordResetExpiry(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
 
-        sendEmail(user.getEmail(), "Password Reset Request",
+        emailService.sendEmail(user.getEmail(), "Password Reset Request",
                 "To reset your password, use the token below:\n" + token);
 
         return "If an account exists with this email, a reset link has been sent.";
@@ -173,29 +158,5 @@ public class AuthService {
         user.setPasswordResetToken(null);
         user.setPasswordResetExpiry(null);
         userRepository.save(user);
-    }
-
-    @Async
-    public void sendEmail(String toEmail, String subject, String text) {
-        Email from = new Email(fromEmail);
-        Email to = new Email(toEmail);
-        Content content = new Content("text/plain", text);
-        Mail mail = new Mail(from, subject, to, content);
-
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
-
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sg.api(request);
-
-            if (response.getStatusCode() >= 400) {
-                System.err.println("Failed to send email via SendGrid. Response Code: " + response.getStatusCode());
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 }
